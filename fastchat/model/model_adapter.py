@@ -394,7 +394,7 @@ def get_generate_stream_function(model: torch.nn.Module, model_path: str):
     is_exllama = "exllama" in model_type
     is_xft = "xft" in model_type
     is_yuan = "yuan" in model_type
-    is_cllm = "cllm" in model_path
+    is_cllm = "consistency-llm" in model_path
 
     if is_chatglm:
         return generate_stream_chatglm
@@ -433,7 +433,7 @@ def get_generate_stream_function(model: torch.nn.Module, model_path: str):
             is_exllama = "exllama" in base_model_type
             is_xft = "xft" in base_model_type
             is_yuan = "yuan" in base_model_type
-            is_cllm = "cllm" in base_model_type
+            is_cllm = "consistency-llm" in base_model_type
 
             generate_stream_function = generate_stream
             if is_chatglm:
@@ -2175,7 +2175,7 @@ class Yuan2Adapter(BaseModelAdapter):
 class CllmAdapter(BaseModelAdapter):
     """The model adapter for CLLM"""
     def match(self, model_path: str):
-        return "vicuna" in model_path.lower()
+        return "consistency-llm" in model_path.lower()
     
     def load_model(self, model_path: str, from_pretrained_kwargs: dict):
         config = AutoConfig.from_pretrained(
@@ -2194,7 +2194,6 @@ class CllmAdapter(BaseModelAdapter):
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
             device_map='cuda',
-            attn_implementation="flash_attention_2",
         )
         return model, tokenizer
     
